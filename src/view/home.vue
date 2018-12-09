@@ -9,7 +9,8 @@
     <div class="seldiv">
         <div class="intelname"><mt-field class="inputclass" :label="homelanguageset.networkpass" :placeholder="homelanguageset.networkpassp" :attr="{ maxlength: 40 }" type="password" v-model="info.intelpass" ></mt-field></div>
     </div>
-    <div class="seldiv">
+    <div @click="showcountry" class="seldiv"><mt-cell  :title="homelanguageset.country" :value="info.country" is-link></mt-cell></div>
+    <div class="seldiv" v-show="showcountrycity">
         <div class="intelname" @click="searchcityfn">
             <mt-field class="inputclass mycitys" :readonly="mycitysreadonly" :label="homelanguageset.area" :placeholder="homelanguageset.areap" :attr="{ maxlength: 100 }" v-model="info.inteladdress" ></mt-field>
         </div>
@@ -17,7 +18,7 @@
     </div>
     <div class="seldiv" v-show="showxialing">
         <div class="dst">{{homelanguageset.dst}}</div><mt-switch v-model="info.dst"></mt-switch>
-        <div  class="dst2"><div class="dstval"><div class="em" @click="showpicker1">{{info.xialing1}}</div><span class="spa">-</span><div class="em" @click="showpicker2">{{info.xialing2}}</div></div></div>
+        <div  class="dst2"><div class="dstval"><span class="qujian1">{{homelanguageset.start}}</span><div class="em" @click="showpicker1">{{info.xialing1}}</div><span class="spa">-</span><div class="em" @click="showpicker2">{{info.xialing2}}</div><span class="qujian2">{{homelanguageset.end}}</span></div></div>
     </div>
     <div class="seldiv" @click="sheshiduVisible=true">
         <div class="dst">{{homelanguageset.temp}}</div><div>{{sheshidutext}}</div>
@@ -44,6 +45,8 @@
     <citypicker  ref="citypicker" @showcity="showcity"></citypicker>
     <!--wifi列表-->
     <wifilist ref="wifilist" @showifinfo="showifinfo"></wifilist>
+    <!--国家选择-->
+    <country ref="country" @changecountry="changecountry"></country>
   </div>
 </template>
 
@@ -52,6 +55,7 @@ import util from 'src/util/util.js'
 import datepicker from 'src/components/datepicker'
 import citypicker from 'src/components/citypicker'
 import wifilist from 'src/components/wifilist'
+import country from 'src/components/country'
 import Languageset from 'static/js/Languageset.js'
 import { } from 'src/model/api.js'
 
@@ -66,6 +70,7 @@ export default {
             chinaxia:{start:"05-01",end:"09-30"},//中国夏时令
             americaxia:{start:"03-11",end:"11-04"},//美国夏时令
             info: {
+                country:"",
                 intelname: "",
                 intelpass: "",
                 inteladdress: "",
@@ -73,6 +78,7 @@ export default {
                 xialing1:new Date().Format("MM-dd"),
                 xialing2:new Date().Format("MM-dd")
             },
+            showcountrycity:false,//是否展示地区
             sheshiduVisible:false,//温度
             sheetVisible: false,//语言
             sheshidutext: "℃",
@@ -113,27 +119,42 @@ export default {
     components: {
         datepicker,
         citypicker,
-        wifilist
+        wifilist,
+        country
     },
     watch:{
-        "info.inteladdress"(){
+        "info.inteladdress"(val){
             //地址改变后修改夏时令并是否展示夏时令
             this.updatexiatime();
             //使用什么温度 巴哈马、伯利兹、英属开曼群岛、帕劳、美利坚合众国及其他附属领土（波多黎各、关岛、美属维京群岛）使用华氏度℉
             this.updatetem();
+            //回填选择框
+            this.$refs["citypicker"].setdefaultvalue(val);
         },
         "info.dst"(value){
             if(value){
                 this.updatexiatime();
             }
         },
+        "info.country"(value){
+            if(value){
+                this.updatexiatime();
+                //展示所在地区
+                this.showcountrycity = true;
+                if(value!="日本"&&value!="中国"&&value!="Japan"&&value!="China"){
+                    this.showxialing = true;
+                }else{
+                    this.showxialing = false;
+                }
+            }
+        }
     },
     created() {
 
     },
     activated(){
-        if(this.$route.query.inteladdress){
-            this.info.inteladdress = this.$route.query.inteladdress;
+        if(this.$route.params.inteladdress){
+            this.info.inteladdress = this.$route.params.inteladdress;
         }
     },
     methods: {
@@ -148,6 +169,15 @@ export default {
         showifinfo(item){
             this.info.intelname = item.name;
         },
+        //展示国家
+        showcountry(){
+            this.$refs["country"].showcountry();
+        },
+        //选择国家
+        changecountry(val){
+            this.$refs["citypicker"].selcity(val.name,true);
+            this.info.country = val.name;
+        },
         //修改温度单位
         updatetem(){
             if(this.info.inteladdress){
@@ -161,22 +191,21 @@ export default {
         },
         //修改夏时令时间根据地区
         updatexiatime(){
-            if(this.info.inteladdress){
-                let country = this.info.inteladdress.split("/")[0];
-                if(country!="日本"){
-                    this.showxialing = true;
+                let country = this.info.country;
+
+                if(country!="日本"&&country!="中国"&&country!="Japan"&&country!="China"){
                     //默认时
                     if(this.info.dst){
                         switch(country){
-                            case "中国"||"China" :
-                                //设置夏令时外面日期
-                                this.info.xialing1 = this.chinaxia.start;
-                                this.info.xialing2 = this.chinaxia.end;
-                                //赋值夏令时组件里面的选择日期
-                                this.$refs["datepicker1"].assgindate(this.chinaxia.start);
-                                this.$refs["datepicker2"].assgindate(this.chinaxia.end);
-                            break;
-                            case "America" :
+                            // case "中国","China" :
+                            //     //设置夏令时外面日期
+                            //     this.info.xialing1 = this.chinaxia.start;
+                            //     this.info.xialing2 = this.chinaxia.end;
+                            //     //赋值夏令时组件里面的选择日期
+                            //     this.$refs["datepicker1"].assgindate(this.chinaxia.start);
+                            //     this.$refs["datepicker2"].assgindate(this.chinaxia.end);
+                            // break;
+                            case "America","美国" :
                                 this.info.xialing1 = this.americaxia.start;
                                 this.info.xialing2 = this.americaxia.end;
 
@@ -185,10 +214,7 @@ export default {
                             break;
                         }
                     }
-                }else{
-                    this.showxialing = false;
                 }
-            }
         },
         //赋值选择的城市
         showcity(values,country){
@@ -214,11 +240,11 @@ export default {
         },
         //选择城市
         selcity(){
-            this.$refs["citypicker"].selcity();
+            this.$refs["citypicker"].selcity(this.info.country);
         },
         //搜索城市
         searchcityfn(){
-            this.$router.push({name:'searchcity',query:{language:this.languagetext}});
+            this.$router.push({name:'searchcity',query:{language:this.languagetext,country:this.info.country}});
         },
         //修改语言
         changelang(val) {
@@ -230,6 +256,8 @@ export default {
                 this.$refs["datepicker2"].switchlanguage(Languageset.Englishset);
                 //切换组件三级地址选择
                 this.$refs["citypicker"].switchlanguage(Languageset.Englishset);
+                //切换国家选择
+                this.$refs["country"].switchlanguage("E");
                 //语言选择
                 this.language = this.languagea;
             }else{
@@ -240,6 +268,8 @@ export default {
                 this.$refs["datepicker2"].switchlanguage(Languageset.Chineseset);
                 //切换组件三级地址选择
                 this.$refs["citypicker"].switchlanguage(Languageset.Chineseset);
+                 //切换国家选择
+                this.$refs["country"].switchlanguage("C");
                 //语言选择
                 this.language = this.languagec;
             }
@@ -313,12 +343,17 @@ export default {
 </style>
 <style lang="scss" scoped>
 .home {
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 1rem;
     margin:0 10px;
+    padding-bottom:1rem;
     .title {
         margin-top:1rem;
+        padding-top:1rem;
         font-size: 1.8rem;
         color:#fff;
         font-weight:bold;
+        color:$blue;
     }
     .seldiv {
         text-align: left;
@@ -345,31 +380,40 @@ export default {
         width: 100%;
     }
     .dstval{
-        margin-left:1rem;
+        margin-left:0.5rem;
         .em{
             display: inline-block;
             border:1px solid #fff;
             border-radius:1rem;
-            padding:0.3rem 0.7rem;
+            padding:0.1rem 0.1rem;
             background:rgba(255,255,255,0.6);
         }
     }
     .saveinfo{
-        width:100%;
-        margin-top:5rem;
+        width: 95%;
+        margin-top:3rem;
     }
     .useabout{
         text-align:left;
         color:#fff;
-        margin-top:2rem;
-        font-size:1rem;
+        margin:2rem 1rem;
+        font-size:1.4rem;
         text-decoration:underline;
+        color:$blue;
     }
     .selcity{
         width: 4rem;
         height: 4rem;
         position: absolute;
         right: 0;
+    }
+    .qujian1{
+        font-size:1rem;
+        color:$gray2;
+    }
+    .qujian2{
+        font-size:1rem;
+        color:$gray2;
     }
 }
 </style>

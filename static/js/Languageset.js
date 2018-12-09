@@ -1,4 +1,5 @@
 let Chineseset ={
+    country:"选择国家",
     china:"中国",
     america:"美国",
     japan:"日本",
@@ -18,12 +19,15 @@ let Chineseset ={
     manual:"使用手册",
     cancelText:"取消",
     searchText:"搜索",
-    confirmText:"确定"
+    confirmText:"确定",
+    start:"开始",
+    end:"结束"
 }
 let Englishset = {
-    china:"CHINA",
-    america:"AMERICA",
-    japan:"JAPAN",
+    country:"COUNTRY",
+    china:"China",
+    america:"America",
+    japan:"Japan",
     languagec:"Chinese",
     languagea:"English",
     title:"WIFI PARAMETER SETTING",
@@ -40,7 +44,9 @@ let Englishset = {
     manual:"OPERATING MANUAL",
     cancelText:"cancel",
     searchText:"search",
-    confirmText:"confirm"
+    confirmText:"confirm",
+    start:"start",
+    end:"end"
 }
 export default {
     Chineseset,

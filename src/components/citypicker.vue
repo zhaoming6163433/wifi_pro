@@ -4,24 +4,7 @@
         v-model="citypopup"
         position="bottom"
     >
-       <mt-navbar v-model="selected">
-        <mt-tab-item id="1"><span class="country">{{homelanguageset.china}}</span></mt-tab-item>
-        <mt-tab-item id="2"><span class="country">{{homelanguageset.america}}</span></mt-tab-item>
-        <mt-tab-item id="3"><span class="country">{{homelanguageset.japan}}</span></mt-tab-item>
-        </mt-navbar>
-
-        <mt-tab-container v-model="selected">
-        <mt-tab-container-item id="1">
-            <mt-picker :slots="slots1" @change="onValuesChange1" value-key="text" ></mt-picker>
-        </mt-tab-container-item>
-        <mt-tab-container-item id="2">
-            <mt-picker :slots="slots2" @change="onValuesChange2" value-key="text" ></mt-picker>
-        </mt-tab-container-item>
-        <mt-tab-container-item id="3">
-            <mt-picker :slots="slots3" @change="onValuesChange3" value-key="text" ></mt-picker>
-        </mt-tab-container-item>
-        </mt-tab-container>
-
+       <mt-picker :slots="slots" @change="onValuesChange1" value-key="text" ></mt-picker>
       </mt-popup>
   </div>
 </template>
@@ -41,6 +24,32 @@ export default {
             homelanguageset:Languageset.Chineseset,//中文
             selected: "1",
             citypopup: false,//展示城市
+            slots:[
+                {
+                    flex: 1,
+                    values: ChinaCityDatas,
+                    className: 'slot1',
+                    textAlign: 'center'
+                }, {
+                    divider: true,
+                    content: '-',
+                    className: 'slot2'
+                }, {
+                    flex: 1,
+                    values: ChinaCityDatas[0].children,
+                    className: 'slot3',
+                    textAlign: 'center'
+                }, {
+                    divider: true,
+                    content: '-',
+                    className: 'slot4'
+                }, {
+                    flex: 1,
+                    values: ChinaCityDatas[0].children[0].children,
+                    className: 'slot5',
+                    textAlign: 'center'
+                }
+            ],
             slots1: [
                 {
                     flex: 1,
@@ -101,6 +110,7 @@ export default {
                     textAlign: 'center'
                 }
             ],
+            picker:"",
             selvalues1: [],//选择的值
             selvalues2: [],
             selvalues3: []
@@ -141,31 +151,162 @@ export default {
     methods: {
         //三级选择
         onValuesChange1(picker, values) {
+            this.picker = picker;
             if (this.selected == "1") {
                 picker.setSlotValues(1, values[0].children);
                 picker.setSlotValues(2, values[1].children);
                 this.selvalues1 = values;
             }
-        },
-        onValuesChange2(picker, values) {
             if (this.selected == "2") {
                 picker.setSlotValues(1, values[0].children);
                 this.selvalues2 = values;
             }
-        },
-        onValuesChange3(picker, values) {
             if (this.selected == "3") {
                 picker.setSlotValues(1, values[0].children);
                 this.selvalues3 = values;
             }
         },
         //展示成
-        selcity() {
-            this.citypopup = true;
+        selcity(country,flag) {
+            if(flag!=true){
+                this.citypopup = true;
+            }
+            switch(country){
+                case "中国":
+                    this.slots = this.slots1;
+                    this.selected = "1";
+                    break;
+                case "China":
+                    this.slots = this.slots1;
+                    this.selected = "1";
+                    break;
+                case "美国":
+                    this.slots = this.slots2;
+                    this.selected = "2";
+                    break;
+                case "America":
+                    this.slots = this.slots2;
+                    this.selected = "2";
+                    break;
+                case "日本":
+                    this.slots = this.slots3;
+                    this.selected = "3";
+                    break;
+                case "Japan":
+                    this.slots = this.slots3;
+                    this.selected = "3";
+                    break;
+            }
         },
         //切换语言方法
         switchlanguage(val){
             this.homelanguageset = val;
+        },
+        //给当前赋初始值
+        setdefaultvalue(val){
+            if(val){
+                let arr = val.split("/");
+                let country = arr[0];
+                if(country=="中国"||country=="China"){
+                    var index1 = 0;
+                    var index2 = 0;
+                    var index3 = 0;
+                    for(var i=1;i<arr.length;i++){
+                        var str = arr[i];
+                        if(i==1){
+                            for(var k1=0;k1<this.slots1[0].values.length;k1++){
+                                if(str == this.slots1[0].values[k1].text){
+                                    index1 = k1;
+                                    break;
+                                }
+                            }
+                        }
+                        if(i==2&&this.slots1[0].values[index1]){
+                            var arr1 = this.slots1[0].values[index1].children;
+                            for(var k2=0;k2<arr1.length;k2++){
+                                if(str == arr1[k2].text){
+                                    index2 = k2;
+                                    break;
+                                }
+                            }
+                        }
+                        if(i==3){
+                            var arr2 = this.slots1[0].values[index1].children[index2].children;
+                            for(var k3=0;k3<arr2.length;k3++){
+                                if(str == arr2[k3].text){
+                                    index3 = k3;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    var len = arr.length;
+                    if(len>1) this.picker.setSlotValue(0, this.slots1[0].values[index1]);
+                    if(len>2) this.picker.setSlotValue(1, this.slots1[0].values[index1].children[index2]);
+                    if(len>3) this.picker.setSlotValue(2, this.slots1[0].values[index1].children[index2].children[index3]);
+                }
+                if(country=="美国"||country=="America"){
+
+                    var index1 = 0;
+                    var index2 = 0;
+                    for(var i=1;i<arr.length;i++){
+                        var str = arr[i];
+                        if(i==1){
+                            for(var k1=0;k1<this.slots2[0].values.length;k1++){
+                                if(str == this.slots2[0].values[k1].text){
+                                    index1 = k1;
+                                    break;
+                                }
+                            }
+                        }
+                        if(i==2&&this.slots2[0].values[index1]){
+                            var arr1 = this.slots2[0].values[index1].children;
+                            for(var k2=0;k2<arr1.length;k2++){
+                                if(str == arr1[k2].text){
+                                    index2 = k2;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    var len = arr.length;
+                    if(len>1) this.picker.setSlotValue(0, this.slots2[0].values[index1]);
+                    if(len>2) this.picker.setSlotValue(1, this.slots2[0].values[index1].children[index2]);
+                }
+                if(country=="日本"||country=="Japan"){
+
+                    var index1 = 0;
+                    var index2 = 0;
+                    for(var i=1;i<arr.length;i++){
+                        var str = arr[i];
+                        if(i==1){
+                            for(var k1=0;k1<this.slots3[0].values.length;k1++){
+                                if(str == this.slots3[0].values[k1].text){
+                                    index1 = k1;
+                                    break;
+                                }
+                            }
+                        }
+                        if(i==2&&this.slots3[0].values[index1]){
+                            var arr1 = this.slots3[0].values[index1].children;
+                            for(var k2=0;k2<arr1.length;k2++){
+                                if(str == arr1[k2].text){
+                                    index2 = k2;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    var len = arr.length;
+                    if(len>1) {
+                        this.picker.setSlotValue(0, this.slots3[0].values[index1]);
+                        }
+                    if(len>2) {
+                        this.picker.setSlotValue(1, this.slots3[0].values[index1].children[index2]);
+                    }
+                }
+
+            }
         }
     },
     mounted() {
