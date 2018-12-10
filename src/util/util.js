@@ -117,7 +117,7 @@ const utils = {
     toastinfo(msg){
         Vue.$toast({
             message: msg,
-            position: 'middle',
+            position: 'bottom',
             duration: appConfigs.toastime
         });
     }

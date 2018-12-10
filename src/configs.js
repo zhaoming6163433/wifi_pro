@@ -10,14 +10,13 @@ const timeout = 10000;
 
 let urlWebHttp;
 
-console.log(process.env)
 //切换环境
 switch (process.env.srconfig) {
 	case 'pro':
 		urlWebHttp = '';
 		break;
 	default://默认开发
-		urlWebHttp = '';
+		urlWebHttp = 'http://www.todaypocket.cn/wifipro';
 		break;
 }
 

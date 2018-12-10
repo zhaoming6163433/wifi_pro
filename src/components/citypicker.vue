@@ -154,7 +154,11 @@ export default {
             this.picker = picker;
             if (this.selected == "1") {
                 picker.setSlotValues(1, values[0].children);
-                picker.setSlotValues(2, values[1].children);
+                if(values[1].children){
+                    picker.setSlotValues(2, values[1].children);
+                }else{
+                    picker.setSlotValues(2, "");
+                }
                 this.selvalues1 = values;
             }
             if (this.selected == "2") {

@@ -2,6 +2,6 @@ import appConfigs from 'src/configs'
 import vueRequest from './vueRequest'
 
 /**
- * 获取资讯信息
+ * 获取wifi列表
  */
-export const get_healthInformationCategoryList = (params) => vueRequest(appConfigs.urlWebHttp + '/mall/news/healthInformationCategoryList?', params, 'GET');
+export const get_wifi_list = (params) => vueRequest(appConfigs.urlWebHttp + '/wifi_scan_result.json', params, 'GET');

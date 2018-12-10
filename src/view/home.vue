@@ -1,16 +1,22 @@
 <template>
   <div class="home">
     <div class="title">{{homelanguageset.title}}</div>
-    <div @click="sheetVisible=true" class="seldiv"><mt-cell  :title="homelanguageset.selanguage" :value="languagetext" is-link></mt-cell></div>
+    <div @click="sheetVisible=true" class="seldiv">
+        <div class="lineback"></div>
+        <mt-cell  :title="homelanguageset.selanguage"  is-link><div class="selleft">{{languagetext}}</div></mt-cell>
+    </div>
     <div class="seldiv">
+        <div class="lineback"></div>
         <div class="intelname"><mt-field class="inputclass" :label="homelanguageset.networkname" :placeholder="homelanguageset.networknamep" :attr="{ maxlength: 100 }" v-model="info.intelname" ></mt-field></div>
         <div class="selcity" @click="wifilistfn"><div class="mint-cell-allow-right"></div></div>
     </div>
     <div class="seldiv">
+        <div class="lineback"></div>
         <div class="intelname"><mt-field class="inputclass" :label="homelanguageset.networkpass" :placeholder="homelanguageset.networkpassp" :attr="{ maxlength: 40 }" type="password" v-model="info.intelpass" ></mt-field></div>
     </div>
-    <div @click="showcountry" class="seldiv"><mt-cell  :title="homelanguageset.country" :value="info.country" is-link></mt-cell></div>
+    <div @click="showcountry" class="seldiv"><div class="lineback"></div><mt-cell  :title="homelanguageset.country"  is-link><div class="selleft">{{info.country}}</div></mt-cell></div>
     <div class="seldiv" v-show="showcountrycity">
+        <div class="lineback"></div>
         <div class="intelname" @click="searchcityfn">
             <mt-field class="inputclass mycitys" :readonly="mycitysreadonly" :label="homelanguageset.area" :placeholder="homelanguageset.areap" :attr="{ maxlength: 100 }" v-model="info.inteladdress" ></mt-field>
         </div>
@@ -21,7 +27,8 @@
         <div  class="dst2"><div class="dstval"><span class="qujian1">{{homelanguageset.start}}</span><div class="em" @click="showpicker1">{{info.xialing1}}</div><span class="spa">-</span><div class="em" @click="showpicker2">{{info.xialing2}}</div><span class="qujian2">{{homelanguageset.end}}</span></div></div>
     </div>
     <div class="seldiv" @click="sheshiduVisible=true">
-        <div class="dst">{{homelanguageset.temp}}</div><div>{{sheshidutext}}</div>
+        <div class="lineback"></div>
+        <div class="dst">{{homelanguageset.temp}}</div><div class="zindex1 selleft">{{sheshidutext}}</div>
         <div class="mint-cell-allow-right"></div>
     </div>
     <mt-button type="primary" class="saveinfo">{{homelanguageset.save}}</mt-button>
@@ -57,7 +64,7 @@ import citypicker from 'src/components/citypicker'
 import wifilist from 'src/components/wifilist'
 import country from 'src/components/country'
 import Languageset from 'static/js/Languageset.js'
-import { } from 'src/model/api.js'
+
 
 export default {
     name: 'home',
@@ -156,18 +163,19 @@ export default {
         if(this.$route.params.inteladdress){
             this.info.inteladdress = this.$route.params.inteladdress;
         }
+        this.get_info();
     },
     methods: {
-        async get_info(params) {
+        async get_info() {
 
         },
         //wifi列表
         wifilistfn(){
-            this.$refs["wifilist"].showlist();
+            this.$refs["wifilist"].showlist(this.languagetext);
         },
         //选择wifi列表
         showifinfo(item){
-            this.info.intelname = item.name;
+            this.info.intelname = item.ssid;
         },
         //展示国家
         showcountry(){
@@ -233,9 +241,11 @@ export default {
             if(values&&values.length>0){
                 let str = "";
                 for(let i=0;i<values.length;i++){
-                    str = str+values[i].text+"/";
+                    if(values[i]){
+                        str = str+values[i].text+"/";
+                    }
                 }
-                this.info.inteladdress = countrystr+"/"+str.substring(0,str.length-1);
+                this.info.inteladdress = str.substring(0,str.length-1);
             }
         },
         //选择城市
@@ -320,7 +330,8 @@ export default {
         background: none;
     }
     .mint-cell-allow-right::after {
-        border-color: #ffffff;
+        border-color: $gray2;
+        right:2rem;
     }
     .inputclass{
         input{
@@ -328,7 +339,7 @@ export default {
         }
     }
     .mint-field .mint-cell-title{
-        width:auto;
+        width:7.3rem;
         padding-right: 10px;
     }
     .mint-cell-wrapper{
@@ -347,6 +358,7 @@ export default {
     border-radius: 1rem;
     margin:0 10px;
     padding-bottom:1rem;
+    height: 95%;
     .title {
         margin-top:1rem;
         padding-top:1rem;
@@ -410,10 +422,29 @@ export default {
     .qujian1{
         font-size:1rem;
         color:$gray2;
+        margin-right:0.5rem;
     }
     .qujian2{
         font-size:1rem;
         color:$gray2;
+        margin-left:0.5rem;
+    }
+    .lineback{
+        z-index: 0;
+        background-color: #fff;
+        position: absolute;
+        left:8rem;
+        right: 1rem;
+        height: 2.5rem;
+        border-radius:0.3rem;
+        border:1px solid $gray2;
+    }
+    .selleft{
+        position: absolute;
+        left: 8.9rem;
+    }
+    .zindex1{
+        z-index: 1;
     }
 }
 </style>

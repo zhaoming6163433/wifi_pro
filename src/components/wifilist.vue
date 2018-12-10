@@ -34,7 +34,7 @@
                     <div class="rss2_1"></div>
                     <div class="rss1_1"></div>
                 </div>
-                <div class="name">{{item.name}}</div>
+                <div class="name">{{item.ssid}}</div>
             </div>
        </mt-popup>
   </div>
@@ -42,6 +42,7 @@
 
 <script>
 import util from 'src/util/util.js'
+import { get_wifi_list } from 'src/model/api.js'
 
 export default {
     name: 'wifilist',
@@ -49,21 +50,56 @@ export default {
     data() {
         return {
             wifilistpopup: false,
-            list: [
-                { name: "JD-access", signal: 0 },
-                { name: "JD", signal: 1 },
-                { name: "JD_guest", signal: 2 },
-                { name: "你打不过我吧", signal: 3 },
-                { name: "でゃ営業え", signal: 4 }
-            ]
+            refreshlisttime:"",
+            list:[]
         }
     },
     created() {
 
     },
+    watch:{
+        wifilistpopup(val){
+            if(!val){
+                clearInterval(this.refreshlisttime);
+            }
+        }
+    },
     methods: {
-        showlist() {
+        async get_info(language) {
+            try{
+                let res = await get_wifi_list();
+                res.forEach((item)=>{
+                    let rssi = item.rssi;
+                    if(rssi>-55&&rssi<=0){
+                        item.signal = 4;
+                    }
+                    if(rssi>-70&&rssi<=-55){
+                        item.signal = 3;
+                    }
+                    if(rssi>-85&&rssi<=-70){
+                        item.signal = 2;
+                    }
+                    if(rssi>-100&&rssi<-85){
+                        item.signal = 1;
+                    }
+                })
+                this.list = res;
+            }catch(e){
+                // if(language=="中文"){
+                //     util.toastinfo("暂无网络列表");
+                // }else{
+                //     util.toastinfo("There is no network list");
+                // }
+            }
+
+        },
+        showlist(language) {
             this.wifilistpopup = true;
+            this.get_info(language);
+            //查询成功后启动定时器
+            this.refreshlisttime = setInterval(()=>{
+                this.get_info(language);
+            },5000);
         },
         gowifinput(item){
             this.wifilistpopup = false;

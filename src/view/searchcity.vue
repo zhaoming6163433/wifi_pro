@@ -71,15 +71,15 @@ export default {
                     //中国
                     ChinaCityDatas.forEach(item1 => {
                         //一级
-                        let obj1 = {title:china+"/"+item1.text,value:china+"/"+item1.text};
+                        let obj1 = {title:item1.text,value:item1.text};
                         chinarr.push(obj1);
                         //二级
                         item1.children&&item1.children.forEach(item2 => {
-                            let obj2 = {title:china+"/"+item1.text+"/"+item2.text,value:china+"/"+item1.text+"/"+item2.text};
+                            let obj2 = {title:item1.text+"/"+item2.text,value:item1.text+"/"+item2.text};
                             chinarr.push(obj2);
                             //三级
                             item2.children&&item2.children.forEach(item3 => {
-                                let obj3 = {title:china+"/"+item1.text+"/"+item2.text+"/"+item3.text,value:china+"/"+item1.text+"/"+item2.text+"/"+item3.text};
+                                let obj3 = {title:item1.text+"/"+item2.text+"/"+item3.text,value:item1.text+"/"+item2.text+"/"+item3.text};
                                 chinarr.push(obj3);
                             });
                         });
@@ -89,15 +89,15 @@ export default {
                     //中国
                     ChinaCityDatas.forEach(item1 => {
                         //一级
-                        let obj1 = {title:china+"/"+item1.text,value:china+"/"+item1.text};
+                        let obj1 = {title:item1.text,value:item1.text};
                         chinarr.push(obj1);
                         //二级
                         item1.children&&item1.children.forEach(item2 => {
-                            let obj2 = {title:china+"/"+item1.text+"/"+item2.text,value:china+"/"+item1.text+"/"+item2.text};
+                            let obj2 = {title:item1.text+"/"+item2.text,value:item1.text+"/"+item2.text};
                             chinarr.push(obj2);
                             //三级
                             item2.children&&item2.children.forEach(item3 => {
-                                let obj3 = {title:china+"/"+item1.text+"/"+item2.text+"/"+item3.text,value:china+"/"+item1.text+"/"+item2.text+"/"+item3.text};
+                                let obj3 = {title:item1.text+"/"+item2.text+"/"+item3.text,value:item1.text+"/"+item2.text+"/"+item3.text};
                                 chinarr.push(obj3);
                             });
                         });
@@ -107,11 +107,11 @@ export default {
                     //美国
                     AmericaCityDatas.forEach(item1 => {
                         //一级
-                        let obj1 = {title:america+"/"+item1.text,value:america+"/"+item1.text};
+                        let obj1 = {title:item1.text,value:item1.text};
                         chinarr.push(obj1);
                         //二级
                         item1.children&&item1.children.forEach(item2 => {
-                            let obj2 = {title:america+"/"+item1.text+"/"+item2.text,value:america+"/"+item1.text+"/"+item2.text};
+                            let obj2 = {title:item1.text+"/"+item2.text,value:item1.text+"/"+item2.text};
                             chinarr.push(obj2);
                         });
                     });
@@ -120,11 +120,11 @@ export default {
                     //美国
                     AmericaCityDatas.forEach(item1 => {
                         //一级
-                        let obj1 = {title:america+"/"+item1.text,value:america+"/"+item1.text};
+                        let obj1 = {title:item1.text,value:item1.text};
                         chinarr.push(obj1);
                         //二级
                         item1.children&&item1.children.forEach(item2 => {
-                            let obj2 = {title:america+"/"+item1.text+"/"+item2.text,value:america+"/"+item1.text+"/"+item2.text};
+                            let obj2 = {title:item1.text+"/"+item2.text,value:item1.text+"/"+item2.text};
                             chinarr.push(obj2);
                         });
                     });
@@ -133,11 +133,11 @@ export default {
                     //日本
                     JapanCityDatas.forEach(item1 => {
                         //一级
-                        let obj1 = {title:japan+"/"+item1.text,value:japan+"/"+item1.text};
+                        let obj1 = {title:item1.text,value:item1.text};
                         chinarr.push(obj1);
                         //二级
                         item1.children&&item1.children.forEach(item2 => {
-                            let obj2 = {title:japan+"/"+item1.text+"/"+item2.text,value:japan+"/"+item1.text+"/"+item2.text};
+                            let obj2 = {title:item1.text+"/"+item2.text,value:item1.text+"/"+item2.text};
                             chinarr.push(obj2);
                         });
                     });
@@ -146,11 +146,11 @@ export default {
                     //日本
                     JapanCityDatas.forEach(item1 => {
                         //一级
-                        let obj1 = {title:japan+"/"+item1.text,value:japan+"/"+item1.text};
+                        let obj1 = {title:item1.text,value:item1.text};
                         chinarr.push(obj1);
                         //二级
                         item1.children&&item1.children.forEach(item2 => {
-                            let obj2 = {title:japan+"/"+item1.text+"/"+item2.text,value:japan+"/"+item1.text+"/"+item2.text};
+                            let obj2 = {title:item1.text+"/"+item2.text,value:item1.text+"/"+item2.text};
                             chinarr.push(obj2);
                         });
                     });
