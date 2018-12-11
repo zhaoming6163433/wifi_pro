@@ -12,7 +12,7 @@
     </div>
     <div class="seldiv">
         <div class="lineback"></div>
-        <div class="intelname"><mt-field class="inputclass" :label="homelanguageset.networkpass" :placeholder="homelanguageset.networkpassp" :attr="{ maxlength: 40 }" type="password" v-model="info.intelpass" ></mt-field></div>
+        <div class="intelname"><mt-field class="inputclass" :label="homelanguageset.networkpass" :placeholder="homelanguageset.networkpassp" :attr="{ maxlength: 40 }"  v-model="info.intelpass" ></mt-field></div>
     </div>
     <div @click="showcountry" class="seldiv"><div class="lineback"></div><mt-cell  :title="homelanguageset.country"  is-link><div class="selleft">{{info.country}}</div></mt-cell></div>
     <div class="seldiv" v-show="showcountrycity">
@@ -28,11 +28,11 @@
     </div>
     <div class="seldiv" @click="sheshiduVisible=true">
         <div class="lineback"></div>
-        <div class="dst">{{homelanguageset.temp}}</div><div class="zindex1 selleft">{{sheshidutext}}</div>
+        <div class="dst">{{homelanguageset.temp}}</div><div class="zindex1 selleft">{{info.sheshidutext}}</div>
         <div class="mint-cell-allow-right"></div>
     </div>
-    <mt-button type="primary" class="saveinfo">{{homelanguageset.save}}</mt-button>
-    <div class="useabout" @click="goabout">{{homelanguageset.manual}}</div>
+    <mt-button type="primary" class="saveinfo" @click="saveInfo">{{homelanguageset.save}}</mt-button>
+    <div class="useaboutout"><div class="useabout" @click="goabout">{{homelanguageset.manual}}</div></div>
     <!-- 选择语言 -->
     <mt-actionsheet
         :actions="language"
@@ -64,7 +64,7 @@ import citypicker from 'src/components/citypicker'
 import wifilist from 'src/components/wifilist'
 import country from 'src/components/country'
 import Languageset from 'static/js/Languageset.js'
-
+import { get_wifi_save } from 'src/model/api.js'
 
 export default {
     name: 'home',
@@ -83,12 +83,12 @@ export default {
                 inteladdress: "",
                 dst:true,
                 xialing1:new Date().Format("MM-dd"),
-                xialing2:new Date().Format("MM-dd")
+                xialing2:new Date().Format("MM-dd"),
+                sheshidutext: "℃"
             },
             showcountrycity:false,//是否展示地区
             sheshiduVisible:false,//温度
             sheetVisible: false,//语言
-            sheshidutext: "℃",
             languagetext: Languageset.Chineseset.languagec,
             sheshidulist:[{
                 name: "℃",
@@ -120,7 +120,15 @@ export default {
             }, {
                 name: Languageset.Englishset.languagea,
                 method: this.changelang
-            }]
+            }],
+            countrylist:[
+                {key:"China",value:"中国"},
+                {key:"Japan",value:"日本"},
+                {key:"America",value:"美国"},
+                {key:"中国",value:"China"},
+                {key:"日本",value:"Japan"},
+                {key:"美国",value:"America"}
+            ]
         }
     },
     components: {
@@ -133,8 +141,6 @@ export default {
         "info.inteladdress"(val){
             //地址改变后修改夏时令并是否展示夏时令
             this.updatexiatime();
-            //使用什么温度 巴哈马、伯利兹、英属开曼群岛、帕劳、美利坚合众国及其他附属领土（波多黎各、关岛、美属维京群岛）使用华氏度℉
-            this.updatetem();
             //回填选择框
             this.$refs["citypicker"].setdefaultvalue(val);
         },
@@ -145,6 +151,8 @@ export default {
         },
         "info.country"(value){
             if(value){
+                //使用什么温度 巴哈马、伯利兹、英属开曼群岛、帕劳、美利坚合众国及其他附属领土（波多黎各、关岛、美属维京群岛）使用华氏度℉
+                this.updatetem();
                 this.updatexiatime();
                 //展示所在地区
                 this.showcountrycity = true;
@@ -163,11 +171,112 @@ export default {
         if(this.$route.params.inteladdress){
             this.info.inteladdress = this.$route.params.inteladdress;
         }
-        this.get_info();
     },
     methods: {
-        async get_info() {
-
+        async wifi_save(params) {
+            //处理省城市
+            let addressarr = this.info.inteladdress.split("/");
+            let province = "";
+            let city = "";
+            let xialing1arr = this.info.xialing1.split("-");
+            let xialing2arr = this.info.xialing1.split("-");
+            addressarr.forEach((item,index) => {
+                if(index==0){
+                    province = item;
+                }else{
+                    city = city+item;
+                }
+            });
+            //处理温度单位
+            let sheshidu = "";
+            if(this.info.sheshidutext == "℃"){
+                sheshidu = "c";
+            }else{
+                sheshidu = "f";
+            }
+            let param = {
+                ssid :this.info.intelname,
+                password:this.intelpass,
+                tempunit:sheshidu,
+                country:this.info.country,
+                dst:this.showxialing,
+                province:province,
+                city:city,
+                dst_sm:xialing1arr[0],
+                dst_sd:xialing1arr[1],
+                dst_em:xialing2arr[0],
+                dst_ed:xialing2arr[1]
+            }
+            try{
+                let res = await get_wifi_save(param);
+                if(this.languagetext=="英文"||this.languagetext=="English"){
+                    util.toastinfo(Languageset.Englishset.sucinfo);
+                }else{
+                    util.toastinfo(Languageset.Chineseset.sucinfo);
+                }
+            }catch(e){
+                if(this.languagetext=="英文"||this.languagetext=="English"){
+                    util.toastinfo(Languageset.Englishset.errinfo);
+                }else{
+                    util.toastinfo(Languageset.Chineseset.errinfo);
+                }
+            }
+        },
+        //提交参数
+        saveInfo(){
+            let pass = this.info.intelpass.trim();
+            if(this.languagetext=="英文"||this.languagetext=="English"){
+                if(this.info.intelname.trim()==""){
+                    util.toastinfo(Languageset.Englishset.tip1);
+                    return;
+                }
+                if(pass==""){
+                    util.toastinfo(Languageset.Englishset.tip2);
+                    return;
+                }
+                if(pass.length<8){
+                    util.toastinfo(Languageset.Englishset.tip3);
+                    return;
+                }
+                if(util.ishastesu(pass)){
+                    util.toastinfo(Languageset.Englishset.tip4);
+                    return;
+                }
+                if(this.info.country==""){
+                    util.toastinfo(Languageset.Englishset.tip5);
+                    return;
+                }
+                if(this.info.inteladdress.trim()==""){
+                    util.toastinfo(Languageset.Englishset.tip6);
+                    return;
+                }
+            }else{
+                if(this.info.intelname.trim()==""){
+                    util.toastinfo(Languageset.Chineseset.tip1);
+                    return;
+                }
+                if(pass==""){
+                    util.toastinfo(Languageset.Chineseset.tip2);
+                    return;
+                }
+                if(pass.length<8){
+                    util.toastinfo(Languageset.Chineseset.tip3);
+                    return;
+                }
+                if(util.ishastesu(pass)){
+                    util.toastinfo(Languageset.Chineseset.tip4);
+                    return;
+                }
+                if(this.info.country==""){
+                    util.toastinfo(Languageset.Chineseset.tip5);
+                    return;
+                }
+                if(this.info.inteladdress.trim()==""){
+                    util.toastinfo(Languageset.Chineseset.tip6);
+                    return;
+                }
+            }
+            this.wifi_save(this.info);
         },
         //wifi列表
         wifilistfn(){
@@ -188,13 +297,11 @@ export default {
         },
         //修改温度单位
         updatetem(){
-            if(this.info.inteladdress){
-                let country = this.info.inteladdress.split("/")[0];
-                if(country!="America"){
-                    this.sheshidutext = "℃";
-                }else{
-                    this.sheshidutext = "℉";
-                }
+            let country = this.info.country;
+            if(country!="America"&&country!="美国"){
+                this.info.sheshidutext = "℃";
+            }else{
+                this.info.sheshidutext = "℉";
             }
         },
         //修改夏时令时间根据地区
@@ -258,6 +365,13 @@ export default {
         },
         //修改语言
         changelang(val) {
+            //设置国家
+            for(var i=0;i<this.countrylist.length;i++){
+                if(this.countrylist[i].key == this.info.country){
+                    this.info.country = this.countrylist[i].value;
+                    break;
+                }
+            }
             if(val.name=="英文"||val.name=="English"){
                 this.languagetext = "English";
                 this.homelanguageset = Languageset.Englishset;
@@ -286,7 +400,7 @@ export default {
         },
         //修改摄氏度
         changesheshidu(val){
-            this.sheshidutext = val.name;
+            this.info.sheshidutext = val.name;
         },
         //选择日期
         showpicker1(){
@@ -303,11 +417,15 @@ export default {
         },
         //使用手册
         goabout(){
-            this.$router.push({name:"info"});
+            if(this.languagetext=="英文"||this.languagetext=="English"){
+                this.$router.push({name:"infoen"});
+            }else{
+                this.$router.push({name:"info"});
+            }
         }
     },
     mounted() {
-        this.get_info();
+
     }
 }
 
@@ -405,13 +523,16 @@ export default {
         width: 95%;
         margin-top:3rem;
     }
-    .useabout{
+    .useaboutout{
         text-align:left;
-        color:#fff;
-        margin:2rem 1rem;
-        font-size:1.4rem;
-        text-decoration:underline;
-        color:$blue;
+        .useabout{
+            color:#fff;
+            margin:2rem 1rem;
+            font-size:1.4rem;
+            text-decoration:underline;
+            color:$blue;
+            display: inline-block;
+        }
     }
     .selcity{
         width: 4rem;

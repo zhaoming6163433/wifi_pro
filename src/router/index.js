@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import home from '@/view/home' //首页路由
 import searchcity from '@/view/searchcity'
 import info from '@/view/info'
+import infoen from '@/view/infoen'
 
 Vue.use(Router)
 
@@ -21,6 +22,11 @@ export default new Router({
             path: '/info',
             name: 'info',
             component: info
+        },
+        {
+            path: '/infoen',
+            name: 'infoen',
+            component: infoen
         }
     ]
 })

@@ -21,7 +21,15 @@ let Chineseset ={
     searchText:"搜索",
     confirmText:"确定",
     start:"开始",
-    end:"结束"
+    end:"结束",
+    tip1:"网络名称不能为空",
+    tip2:"网络密码不能为空",
+    tip3:"密码长度需要大于等于8个字符",
+    tip4:"密码存在特殊字符",
+    tip5:"国家不能为空",
+    tip6:"所在地区不能为空",
+    errinfo:"保存失败",
+    sucinfo:"保存成功"
 }
 let Englishset = {
     country:"COUNTRY",
@@ -46,7 +54,15 @@ let Englishset = {
     searchText:"search",
     confirmText:"confirm",
     start:"start",
-    end:"end"
+    end:"end",
+    tip1:"The network name cannot be empty",
+    tip2:"The network password cannot be empty",
+    tip3:"The password length needs to be at least 8 characters",
+    tip4:"There are special characters in the password",
+    tip5:"The state cannot be empty",
+    tip6:"The area cannot be empty",
+    errinfo:"Save failed",
+    sucinfo:"Save success"
 }
 export default {
     Chineseset,

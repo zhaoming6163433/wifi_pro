@@ -120,6 +120,16 @@ const utils = {
             position: 'bottom',
             duration: appConfigs.toastime
         });
+    },
+    //是否有特殊字符
+    ishastesu(val){
+        var regEn = /[`~!@#$%^&*()_+<>?:"{},.\/;'[\]]/im;
+        var regCn = /[·！#￥（——）：；“”‘、，|《。》？、【】[\]]/im;
+        if(regEn.test(val) || regCn.test(val)) {
+            return true;
+        }else{
+            return false;
+        }
     }
 }
 export default utils

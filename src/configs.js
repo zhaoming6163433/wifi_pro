@@ -13,7 +13,7 @@ let urlWebHttp;
 //切换环境
 switch (process.env.srconfig) {
 	case 'pro':
-		urlWebHttp = '';
+		urlWebHttp = 'http://192.168.1.210';
 		break;
 	default://默认开发
 		urlWebHttp = 'http://www.todaypocket.cn/wifipro';

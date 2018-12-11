@@ -21,7 +21,7 @@ export default {
     height: 100%;
     min-width: 320px;
     overflow: auto;
-    background-image: -webkit-linear-gradient(140deg, #42BEFF, #d0d0d0,#42BEFF 50%,#d0d0d0 );
+    background-image: -webkit-linear-gradient(140deg, #42BEFF, #bfbfbf,#42BEFF 50%,#bfbfbf );
 }
 body,
 h1,
