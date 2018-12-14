@@ -43,7 +43,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../wifipro'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/wifipro/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

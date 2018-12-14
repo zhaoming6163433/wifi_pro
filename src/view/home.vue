@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <div class="logo"><img src="../../static/img/logo.svg"/></div>
     <div class="title">{{homelanguageset.title}}</div>
     <div @click="sheetVisible=true" class="seldiv">
         <div class="lineback"></div>
@@ -453,6 +454,7 @@ export default {
     }
     .inputclass{
         input{
+            line-height: 1;
             background-color: transparent;
         }
     }
@@ -477,9 +479,18 @@ export default {
     margin:0 10px;
     padding-bottom:1rem;
     height: 95%;
+    position: relative;
+    .logo{
+        position: absolute;
+        top:0.3rem;
+        left:1px;
+        img{
+            width:11rem;
+        }
+    }
     .title {
         margin-top:1rem;
-        padding-top:1rem;
+        padding-top:2rem;
         font-size: 1.8rem;
         color:#fff;
         font-weight:bold;
@@ -537,8 +548,8 @@ export default {
     .selcity{
         width: 4rem;
         height: 4rem;
-        position: absolute;
         right: 0;
+        position: absolute;
     }
     .qujian1{
         font-size:1rem;
@@ -559,10 +570,12 @@ export default {
         height: 2.5rem;
         border-radius:0.3rem;
         border:1px solid $gray2;
+        top: 0.7rem;
     }
     .selleft{
         position: absolute;
         left: 8.9rem;
+        line-height: 0.7rem;
     }
     .zindex1{
         z-index: 1;
